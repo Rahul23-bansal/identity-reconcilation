@@ -2,6 +2,7 @@ package com.bitespeed.identityreconcilation.Service;
 
 import com.bitespeed.identityreconcilation.Repository.ContactRepository;
 import com.bitespeed.identityreconcilation.dto.ContactResponseDto;
+import com.bitespeed.identityreconcilation.dto.WrappedContactResponseDto;
 import com.bitespeed.identityreconcilation.enums.LinkPrecedence;
 import com.bitespeed.identityreconcilation.model.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +118,7 @@ public class ContactService {
         return primaryContact;
     }
 
-    public ContactResponseDto buildContactResponse(Contact contact) {
+    public WrappedContactResponseDto buildContactResponse(Contact contact) {
         List<Contact> secondaryContacts;
         Set<String> emails = new HashSet<>();
         Set<String> phoneNumbers = new HashSet<>();
@@ -140,7 +141,8 @@ public class ContactService {
                     }
                     secondaryContactIds.add(secondary.getId());
                 }
-                return new ContactResponseDto(parentContact.getId(), new ArrayList<>(emails), new ArrayList<>(phoneNumbers), secondaryContactIds);
+                ContactResponseDto contactResponseDto =  new ContactResponseDto(parentContact.getId(), new ArrayList<>(emails), new ArrayList<>(phoneNumbers), secondaryContactIds);
+                return new WrappedContactResponseDto(contactResponseDto);
             }
         } else {
             emails.add(contact.getEmail());
@@ -155,7 +157,8 @@ public class ContactService {
                 }
                 secondaryContactIds.add(secondary.getId());
             }
-            return new ContactResponseDto(contact.getId(), new ArrayList<>(emails), new ArrayList<>(phoneNumbers), secondaryContactIds);
+            ContactResponseDto contactResponseDto = new ContactResponseDto(contact.getId(), new ArrayList<>(emails), new ArrayList<>(phoneNumbers), secondaryContactIds);
+            return new WrappedContactResponseDto(contactResponseDto);
         }
         return null;
     }
